@@ -34,7 +34,7 @@ public class PlayerWayPointController : MonoBehaviour {
 	// Update is called once per frame
 	float fr = 0f;
 	float footsFrequency = 0.7f;
-	void Update()
+	void Update ()
 	{
 		if( rigidbody.velocity.magnitude > 0f)
 		{
@@ -45,6 +45,12 @@ public class PlayerWayPointController : MonoBehaviour {
 				fr = 0f;
 				
 				audio.PlayOneShot( footstepSound );
+			}
+		}
+
+		if (interaction.hit.transform.tag == "Interactive") {
+			if ((interaction.hit.transform.position - transform.position ).sqrMagnitude < 5) {
+				interaction.hit.transform.renderer.material = interactiveMaterial;
 			}
 		}
 	}
@@ -62,7 +68,7 @@ public class PlayerWayPointController : MonoBehaviour {
 		
 		if (Input.GetMouseButtonUp(2))
 		{
-			if (interaction.hit.transform.tag == "WayPoint" && !moving && !interaction.hit.transform.name.Contains("trigger")) {
+			if (interaction.hit.transform.tag == "WayPoint" && !moving/* && !interaction.hit.transform.name.Contains("trigger")*/) {
 				moving = true;
 				wayPointReached = false;
 				facingWayPoint = interaction.hit.transform;
@@ -73,15 +79,10 @@ public class PlayerWayPointController : MonoBehaviour {
 			else if (interaction.hit.transform.tag == "Interactive") {
 				if ((interaction.hit.transform.position - transform.position ).sqrMagnitude < 5) {
 					audio.PlayOneShot( interactionSound);
+					GameObject.Destroy(interaction.hit.transform.gameObject);
 				}
 			}
-		}
-
-		if (interaction.hit.transform.tag == "Interactive") {
-			if ((interaction.hit.transform.position - transform.position ).sqrMagnitude < 5) {
-				interaction.hit.transform.renderer.material = interactiveMaterial;
-			}
-		}
+		}				
 
 		if (moving) {
 			dist = (facingWayPoint.position - transform.position ).sqrMagnitude;
